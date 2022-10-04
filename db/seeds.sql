@@ -16,4 +16,16 @@ VALUES
     ('5', 'Account Manager', 3, '160000'),
     ('6', 'Accountant', 3, '125000'),
     ('7', 'Legal Team Lead', 4, '250000'),
-    ('8', 'Lawyer', 4, '190000')
+    ('8', 'Lawyer', 4, '190000');
+
+INSERT INTO employee
+    (id, first_name, last_name, job_title_id, manager_id)
+VALUES
+    ('1', 'John', 'Doe', 1, NULL),
+    ('2', 'Mike', 'Chan', 2, 1),
+    ('3', 'Ashley', 'Rodriguez', 2, NULL),
+    ('4', 'Kevin', 'Tupik', 2, 3),
+    ('5', 'Kunal', 'Singh', 3, NULL),
+    ('6', 'Malia', 'Brown', 3, 5),
+    ('7', 'Sara', 'Lourd', 4, Null),
+    ('8', 'Tom', 'Allen', 4, 7);
