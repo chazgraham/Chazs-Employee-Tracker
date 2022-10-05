@@ -5,17 +5,16 @@ const cTable = require('console.table');
 
 connection.connect((error) => {
     if (error) throw error;
-    console.log(``);
+    console.log(`
+    ======================
+    || EMPLOYEE TRACKER ||
+    ======================
+    `);
   
     promptOptions();
 });
 
 const promptOptions = () => {
-    console.log(`
-    =================
-    EMPLOYEE TRACKER
-    =================
-    `);
     return inquirer.prompt([
         {
             name: 'options',
@@ -26,11 +25,14 @@ const promptOptions = () => {
     ])
     .then(choice => {
         if(choice.options === 'View All Departments') {
-            console.log('View All Departments chosen');
+            console.log('Viewing All Departments');
+            showAllDepartments();
         }else if(choice.options === 'View All Roles') {
-            console.log('View All Roles chosen');
+            console.log('Viewing All Roles');
+            showAllRoles();
         }else if(choice.options === 'View All Employees') {
-            console.log('View All Employees chosen');
+            console.log('Viewing All Employees');
+            showAllEmployees();
         }else if(choice.options === 'Add a Department') {
             console.log('Add a Department chosen');
         }else if(choice.options === 'Add a Role') {
@@ -43,4 +45,37 @@ const promptOptions = () => {
             connection.end();
         }
     });
-} 
+}
+
+const showAllDepartments = () => {
+    const sql = `SELECT department.id AS id, department.name AS department FROM department`;
+  
+    connection.promise().query(sql).then(([rows]) => {
+      console.table(rows);
+      promptOptions();
+    });
+};
+
+const showAllRoles = () => {
+    const sql = `SELECT job_title.id, job_title.title, department.name AS department, job_title.salary
+                FROM job_title
+                INNER JOIN department ON job_title.department_id = department.id`;
+    
+    connection.promise().query(sql).then(([rows]) => {
+        console.table(rows);
+        promptOptions();
+    });
+}
+
+const showAllEmployees = () => {
+    const sql = `SELECT employee.id, employee.first_name, employee.last_name, job_title.title, department.name AS department, job_title.salary, 
+                CONCAT (manager.first_name, " ", manager.last_name) AS manager
+                FROM employee
+                LEFT JOIN job_title ON employee.job_title_id = job_title.id
+                LEFT JOIN department ON job_title.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+    connection.promise().query(sql).then(([rows]) => {
+        console.table(rows);
+        promptOptions();
+    });
+}
