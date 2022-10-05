@@ -2,7 +2,6 @@ const connection = require('./db/connection');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 
-
 connection.connect((error) => {
     if (error) throw error;
     console.log(`
@@ -34,10 +33,9 @@ const promptOptions = () => {
             console.log('Viewing All Employees');
             showAllEmployees();
         }else if(choice.options === 'Add a Department') {
-            console.log('Add a new Department');
             addDepartment();
         }else if(choice.options === 'Add a Role') {
-            console.log('Add a Role chosen');
+            addRole();
         }else if(choice.options === 'Add an Employee') {
             console.log('Add an Employee chosen');
         }else if(choice.options === 'Update an Employee Role') {
@@ -82,27 +80,66 @@ const showAllEmployees = () => {
 }
 
 const addDepartment = () => {
-    inquirer.prompt([{
-        type: 'input',
-        name: 'newDepartment',
-        message: "What department would you like to add?",
-        validate: nameInput => {
-            if (nameInput) {
-                return true;
-            } else {
-                console.log('Please enter new department!');
-                return false;
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDepartment',
+            message: "What department would you like to add?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter new department!');
+                    return false;
+                }
             }
         }
-    }])
+    ])
     .then(answer => {
         const sql = `INSERT INTO department (name)
                     VALUES (?)`;
         connection.query(sql, answer.newDepartment, (err, result) => {
             if (err) throw err;
-            console.log('Added ' + answer.newDepartment + " to departments!");
+            console.log('Added ' + answer.newDepartment + " to the database");
     
-            showAllDepartments();
+            promptOptions();
         });
     });
+} 
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newRole',
+            message: "What role would you like to add?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter new role!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'list',
+            name: 'roleDepartment',
+            message: "What department does this role belong to?",
+            choices: //TODO: find out how to pull list of departments from database
+        },
+        {
+            type: 'input',
+            name: 'newRoleSalary',
+            message: "What salary would you like to add to your new role?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a salary!');
+                    return false;
+                }
+            }
+        }
+    ])
 }
