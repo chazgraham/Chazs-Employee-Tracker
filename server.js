@@ -17,8 +17,8 @@ connection.connect((error) => {
 const promptOptions = () => {
     return inquirer.prompt([
         {
-            name: 'options',
             type: 'list',
+            name: 'options',
             message: 'What would you like to do?',
             choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Quit']
         }
@@ -34,7 +34,8 @@ const promptOptions = () => {
             console.log('Viewing All Employees');
             showAllEmployees();
         }else if(choice.options === 'Add a Department') {
-            console.log('Add a Department chosen');
+            console.log('Add a new Department');
+            addDepartment();
         }else if(choice.options === 'Add a Role') {
             console.log('Add a Role chosen');
         }else if(choice.options === 'Add an Employee') {
@@ -77,5 +78,31 @@ const showAllEmployees = () => {
     connection.promise().query(sql).then(([rows]) => {
         console.table(rows);
         promptOptions();
+    });
+}
+
+const addDepartment = () => {
+    inquirer.prompt([{
+        type: 'input',
+        name: 'newDepartment',
+        message: "What department would you like to add?",
+        validate: nameInput => {
+            if (nameInput) {
+                return true;
+            } else {
+                console.log('Please enter new department!');
+                return false;
+            }
+        }
+    }])
+    .then(answer => {
+        const sql = `INSERT INTO department (name)
+                    VALUES (?)`;
+        connection.query(sql, answer.newDepartment, (err, result) => {
+            if (err) throw err;
+            console.log('Added ' + answer.newDepartment + " to departments!");
+    
+            showAllDepartments();
+        });
     });
 }
