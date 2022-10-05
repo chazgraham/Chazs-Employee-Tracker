@@ -37,7 +37,7 @@ const promptOptions = () => {
         }else if(choice.options === 'Add a Role') {
             addRole();
         }else if(choice.options === 'Add an Employee') {
-            console.log('Add an Employee chosen');
+            addEmployee();
         }else if(choice.options === 'Update an Employee Role') {
             console.log('Update an Employee Role chosen');
         }else if(choice.options === 'Quit') {
@@ -156,6 +156,73 @@ const addRole = () => {
         connection.query(sql, params, (err, result) => {
             if (err) throw err;
             console.log('Added ' + answer.newRole + " to the database!");
+            promptOptions();
+        });
+    });
+}
+
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newEmployeeFirst',
+            message: "What is the first name of the employee that would like to add?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter employees first name!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeLast',
+            message: "What is the last name of the employee that would like to add?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter employees last name!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeRole',
+            message: "What is the ID number of the role you would give this employee?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter a role ID!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeManager',
+            message: "What is the ID number of the manager assigned to this employee?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter a managers ID!');
+                    return false;
+                }
+            }
+        }
+    ])
+    .then(answer => {
+        const sql = `INSERT INTO employee (first_name, last_name, job_title_id, manager_id) VALUES (?, ?, ?, ?)`;
+        const params = [answer.newEmployeeFirst, answer.newEmployeeLast, answer.newEmployeeRole, answer.newEmployeeManager];
+
+        connection.query(sql, params, (err, result) => {
+            if (err) throw err;
+            console.log('Added ' + answer.newEmployeeFirst + answer.newEmployeeLast + " to the database!");
             promptOptions();
         });
     });
