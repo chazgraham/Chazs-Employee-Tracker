@@ -1,6 +1,7 @@
 const connection = require('./db/connection');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const { up } = require('inquirer/lib/utils/readline');
 
 connection.connect((error) => {
     if (error) throw error;
@@ -39,7 +40,7 @@ const promptOptions = () => {
         }else if(choice.options === 'Add an Employee') {
             addEmployee();
         }else if(choice.options === 'Update an Employee Role') {
-            console.log('Update an Employee Role chosen');
+            employeeToBeUpdated()
         }else if(choice.options === 'Quit') {
             connection.end();
         }
@@ -225,5 +226,62 @@ const addEmployee = () => {
             console.log('Added ' + answer.newEmployeeFirst + answer.newEmployeeLast + " to the database!");
             promptOptions();
         });
+    });
+}
+
+const employeeToBeUpdated = () => {
+    const sql = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title.title AS role, department.name AS department, job_title.salary, 
+                CONCAT (manager.first_name, " ", manager.last_name) AS manager
+                FROM employee
+                LEFT JOIN job_title ON employee.job_title_id = job_title.id
+                LEFT JOIN department ON job_title.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+    connection.promise().query(sql).then(([rows]) => {
+        console.table(rows);
+        updateEmployeeRole();
+    });
+}
+
+const updateEmployeeRole = () => {    
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'updateEmployee',
+            message: "What is the ID number of the employee you woukd like to update?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter a employee ID!');
+                    return false;
+                }
+            }
+        }//,
+        //{
+            //type: 'input',
+           // name: 'newEmployeeRole',
+            //message: "What is the ID number of the updated role you would give this employee?",
+            //validate: nameInput => {
+                //if (!isNaN(nameInput)) {
+                    //return true;
+                //} else {
+                    //console.log('Please enter a role ID!');
+                    //return false;
+                //}
+            //}
+        //}
+    ])
+    .then(answer => {
+        const sql = `SELECT * FROM employee WHERE id = ?`;
+        const params = [ answer.updateEmployee ];
+
+        connection.promise().query(sql, params).then(([rows]) => {
+            console.table(rows);
+        })
+        //connection.query(sql, params, (err, result) => {
+            //if (err) throw err;
+            //console.log('Employee role has been updated to' + answer.updateEmployeeRole + " in the database!");
+            //promptOptions();
+        //});
     });
 }
