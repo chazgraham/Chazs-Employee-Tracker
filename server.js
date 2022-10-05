@@ -56,7 +56,7 @@ const showAllDepartments = () => {
 };
 
 const showAllRoles = () => {
-    const sql = `SELECT job_title.id, job_title.title, department.name AS department, job_title.salary
+    const sql = `SELECT job_title.id, job_title.title AS role, department.name AS department, job_title.salary
                 FROM job_title
                 INNER JOIN department ON job_title.department_id = department.id`;
     
@@ -67,7 +67,7 @@ const showAllRoles = () => {
 }
 
 const showAllEmployees = () => {
-    const sql = `SELECT employee.id, employee.first_name, employee.last_name, job_title.title, department.name AS department, job_title.salary, 
+    const sql = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title.title AS role, department.name AS department, job_title.salary, 
                 CONCAT (manager.first_name, " ", manager.last_name) AS manager
                 FROM employee
                 LEFT JOIN job_title ON employee.job_title_id = job_title.id
@@ -96,8 +96,8 @@ const addDepartment = () => {
         }
     ])
     .then(answer => {
-        const sql = `INSERT INTO department (name)
-                    VALUES (?)`;
+        const sql = `INSERT INTO department (name) VALUES (?)`;
+        
         connection.query(sql, answer.newDepartment, (err, result) => {
             if (err) throw err;
             console.log('Added ' + answer.newDepartment + " to the database");
@@ -123,17 +123,24 @@ const addRole = () => {
             }
         },
         {
-            type: 'list',
+            type: 'input',
             name: 'roleDepartment',
-            message: "What department does this role belong to?",
-            choices: //TODO: find out how to pull list of departments from database
+            message: "What department ID number does you role fall into?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter department ID number!');
+                    return false;
+                }
+            }
         },
         {
             type: 'input',
             name: 'newRoleSalary',
             message: "What salary would you like to add to your new role?",
             validate: nameInput => {
-                if (nameInput) {
+                if (!isNaN(nameInput)) {
                     return true;
                 } else {
                     console.log('Please enter a salary!');
@@ -142,4 +149,14 @@ const addRole = () => {
             }
         }
     ])
+    .then(answer => {
+        const sql = `INSERT INTO job_title (title, department_id, salary) VALUES (?, ?, ?)`;
+        const params = [answer.newRole, answer.roleDepartment, answer.newRoleSalary];
+
+        connection.query(sql, params, (err, result) => {
+            if (err) throw err;
+            console.log('Added ' + answer.newRole + " to the database!");
+            promptOptions();
+        });
+    });
 }
