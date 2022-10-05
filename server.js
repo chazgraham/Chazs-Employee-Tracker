@@ -156,7 +156,7 @@ const addRole = () => {
 
         connection.query(sql, params, (err, result) => {
             if (err) throw err;
-            console.log('Added ' + answer.newRole + " to the database!");
+            console.log('Added ' + answer.newRole + ' to the database!');
             promptOptions();
         });
     });
@@ -223,7 +223,7 @@ const addEmployee = () => {
 
         connection.query(sql, params, (err, result) => {
             if (err) throw err;
-            console.log('Added ' + answer.newEmployeeFirst + answer.newEmployeeLast + " to the database!");
+            console.log('Added ' + answer.newEmployeeFirst + answer.newEmployeeLast + ' to the database!');
             promptOptions();
         });
     });
@@ -256,32 +256,29 @@ const updateEmployeeRole = () => {
                     return false;
                 }
             }
-        }//,
-        //{
-            //type: 'input',
-           // name: 'newEmployeeRole',
-            //message: "What is the ID number of the updated role you would give this employee?",
-            //validate: nameInput => {
-                //if (!isNaN(nameInput)) {
-                    //return true;
-                //} else {
-                    //console.log('Please enter a role ID!');
-                    //return false;
-                //}
-            //}
-        //}
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeRole',
+            message: "What is the ID number of the updated role you would give this employee?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter a role ID!');
+                    return false;
+                }
+            }
+        }
     ])
     .then(answer => {
-        const sql = `SELECT * FROM employee WHERE id = ?`;
-        const params = [ answer.updateEmployee ];
+        const sql = `UPDATE employee SET job_title_id = ? WHERE id = ?`;
+        const params = [  answer.newEmployeeRole, answer.updateEmployee ];
 
-        connection.promise().query(sql, params).then(([rows]) => {
-            console.table(rows);
-        })
-        //connection.query(sql, params, (err, result) => {
-            //if (err) throw err;
-            //console.log('Employee role has been updated to' + answer.updateEmployeeRole + " in the database!");
-            //promptOptions();
-        //});
+        connection.query(sql, params, (err, result) => {
+            if (err) throw err;
+            console.log('updated employee in the database!');
+            promptOptions();
+        });
     });
 }
