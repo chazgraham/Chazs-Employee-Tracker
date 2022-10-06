@@ -23,9 +23,9 @@ INSERT INTO employee
 VALUES
     ('1', 'John', 'Doe', 1, NULL),
     ('2', 'Mike', 'Chan', 2, 1),
-    ('3', 'Ashley', 'Rodriguez', 2, NULL),
-    ('4', 'Kevin', 'Tupik', 2, 3),
-    ('5', 'Kunal', 'Singh', 3, NULL),
-    ('6', 'Malia', 'Brown', 3, 5),
-    ('7', 'Sara', 'Lourd', 4, Null),
-    ('8', 'Tom', 'Allen', 4, 7);
+    ('3', 'Ashley', 'Rodriguez', 3, NULL),
+    ('4', 'Kevin', 'Tupik', 4, 3),
+    ('5', 'Kunal', 'Singh', 5, NULL),
+    ('6', 'Malia', 'Brown', 6, 5),
+    ('7', 'Sara', 'Lourd', 7, Null),
+    ('8', 'Tom', 'Allen', 8, 7);

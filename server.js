@@ -230,13 +230,11 @@ const addEmployee = () => {
 }
 
 const employeeToBeUpdated = () => {
-    const sql = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title.title AS role, department.name AS department, job_title.salary, 
-                CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    const employee = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title_id AS role_id, job_title.title AS role, department.name AS department, job_title.salary
                 FROM employee
                 LEFT JOIN job_title ON employee.job_title_id = job_title.id
-                LEFT JOIN department ON job_title.department_id = department.id
-                LEFT JOIN employee manager ON employee.manager_id = manager.id`;
-    connection.promise().query(sql).then(([rows]) => {
+                LEFT JOIN department ON job_title.department_id = department.id`;
+    connection.promise().query(employee).then(([rows]) => {
         console.table(rows);
         updateEmployeeRole();
     });
