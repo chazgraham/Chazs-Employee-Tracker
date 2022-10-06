@@ -267,11 +267,24 @@ const updateEmployeeRole = () => {
                     return false;
                 }
             }
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeManager',
+            message: "What is the ID number of the employee you would set as thier new manager?",
+            validate: nameInput => {
+                if (!isNaN(nameInput)) {
+                    return true;
+                } else {
+                    console.log('Please enter a employee ID!');
+                    return false;
+                }
+            }
         }
     ])
     .then(answer => {
-        const sql = `UPDATE employee SET job_title_id = ? WHERE id = ?`;
-        const params = [  answer.newEmployeeRole, answer.updateEmployee ];
+        const sql = `UPDATE employee SET job_title_id = ?, manager_id = ? WHERE id = ?`;
+        const params = [  answer.newEmployeeRole, answer.newEmployeeManager, answer.updateEmployee, ];
 
         connection.query(sql, params, (err, result) => {
             if (err) throw err;
