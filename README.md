@@ -1,8 +1,8 @@
 # Chazs Employee Tracker
 
 ## Descripton
-A back-end application that uses npm express, npm inquirer, mysql12, and cTable to gather information that views databases and adds information to databases as well via user input.
-hyper link here
+A back-end application that uses user input via inquirer to update our databases via npm express, mysql12, and cTable and adds user input information to databases as well as allows users to view the databases. For a walk through demo please click the link below.
+https://drive.google.com/file/d/1OcJbIBjTpKIzEA_w6ByM8Ekg8i0v9WeZ/view
 ![](./assests/images/employee2.jpg)
 ![](./assests/images/employee1.jpg)
 ## Table of Contents

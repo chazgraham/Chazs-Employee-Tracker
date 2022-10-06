@@ -162,12 +162,12 @@ const addRole = () => {
 }
 
 const chartAddEmployee = () => {
-    const employee = `SELECT job_title.id AS role_id, job_title.title AS role, employee.id,
-                    CONCAT (manager.first_name, " ", manager.last_name) AS manager  
+    const sql = `SELECT job_title.id AS role_id, job_title.title AS role, employee.id AS manager_id,
+                    CONCAT (employee.first_name, " ", employee.last_name) AS manager  
                     FROM employee
                     LEFT JOIN job_title ON employee.job_title_id = job_title.id
                     LEFT JOIN employee manager ON employee.manager_id = manager.id`;
-    connection.promise().query(employee).then(([rows]) => {
+    connection.promise().query(sql).then(([rows]) => {
         console.table(rows);
         addEmployee();
     });
@@ -241,11 +241,11 @@ const addEmployee = () => {
 }
 
 const employeeToBeUpdated = () => {
-    const employee = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title_id AS role_id, job_title.title AS role, department.name AS department, job_title.salary
+    const sql = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, job_title_id AS role_id, job_title.title AS role, department.name AS department, job_title.salary
                 FROM employee
                 LEFT JOIN job_title ON employee.job_title_id = job_title.id
                 LEFT JOIN department ON job_title.department_id = department.id`;
-    connection.promise().query(employee).then(([rows]) => {
+    connection.promise().query(sql).then(([rows]) => {
         console.table(rows);
         updateEmployeeRole();
     });
