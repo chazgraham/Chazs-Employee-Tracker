@@ -1,7 +1,6 @@
 const connection = require('./db/connection');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { up } = require('inquirer/lib/utils/readline');
 
 connection.connect((error) => {
     if (error) throw error;
@@ -38,7 +37,7 @@ const promptOptions = () => {
         }else if(choice.options === 'Add a Role') {
             addRole();
         }else if(choice.options === 'Add an Employee') {
-            addEmployee();
+            chartAddEmployee();
         }else if(choice.options === 'Update an Employee Role') {
             employeeToBeUpdated()
         }else if(choice.options === 'Quit') {
@@ -162,6 +161,18 @@ const addRole = () => {
     });
 }
 
+const chartAddEmployee = () => {
+    const employee = `SELECT job_title.id AS role_id, job_title.title AS role, employee.id,
+                    CONCAT (manager.first_name, " ", manager.last_name) AS manager  
+                    FROM employee
+                    LEFT JOIN job_title ON employee.job_title_id = job_title.id
+                    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+    connection.promise().query(employee).then(([rows]) => {
+        console.table(rows);
+        addEmployee();
+    });
+}
+
 const addEmployee = () => {
     inquirer.prompt([
         {
@@ -206,7 +217,7 @@ const addEmployee = () => {
         {
             type: 'input',
             name: 'newEmployeeManager',
-            message: "What is the ID number of the manager assigned to this employee?",
+            message: "What is the ID number of the employee you would set as manager for this employee?",
             validate: nameInput => {
                 if (!isNaN(nameInput)) {
                     return true;
